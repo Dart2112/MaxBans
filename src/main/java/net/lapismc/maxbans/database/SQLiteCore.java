@@ -25,15 +25,13 @@ public class SQLiteCore implements DatabaseCore {
             if (this.connection != null && !this.connection.isClosed()) {
                 return this.connection;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
         }
         if (this.dbFile.exists()) {
             try {
                 Class.forName("org.sqlite.JDBC");
                 return this.connection = DriverManager.getConnection("jdbc:sqlite:" + this.dbFile);
             } catch (ClassNotFoundException | SQLException e2) {
-                e2.printStackTrace();
                 return null;
             }
         }
@@ -41,7 +39,6 @@ public class SQLiteCore implements DatabaseCore {
             this.dbFile.createNewFile();
             return this.getConnection();
         } catch (IOException e3) {
-            e3.printStackTrace();
             return null;
         }
     }
@@ -67,8 +64,7 @@ public class SQLiteCore implements DatabaseCore {
                 final PreparedStatement ps = bs.prepareStatement(this.getConnection());
                 ps.execute();
                 ps.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (SQLException ignored) {
             }
         }
     }
@@ -81,8 +77,7 @@ public class SQLiteCore implements DatabaseCore {
         (this.watcher = new Thread(() -> {
             try {
                 Thread.sleep(30000L);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
+            } catch (InterruptedException ignored) {
             }
             SQLiteCore.this.flush();
         })).start();

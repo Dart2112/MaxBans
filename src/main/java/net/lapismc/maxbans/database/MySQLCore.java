@@ -44,7 +44,6 @@ public class MySQLCore implements DatabaseCore {
                 MySQLCore.pool.set(i, connection);
                 return connection;
             } catch (SQLException e) {
-                e.printStackTrace();
                 ++i;
             }
         }
@@ -57,16 +56,14 @@ public class MySQLCore implements DatabaseCore {
             while (con == null) {
                 try {
                     Thread.sleep(15L);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
+                } catch (InterruptedException ignored) {
                 }
                 this.getConnection();
             }
             final PreparedStatement ps = bs.prepareStatement(con);
             ps.execute();
             ps.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException ignored) {
         }
     }
 
