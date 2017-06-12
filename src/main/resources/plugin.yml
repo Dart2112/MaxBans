@@ -1,6 +1,6 @@
 name: MaxBans
-version: 2.7 #Release
-main: MaxBans
+version: 2.7
+main: net.lapismc.maxbans.MaxBans
 authors: [Darekfive, Netherfoam, FabioZumbi12, dart2112]
 
 soft-depend: [HeroChat]
