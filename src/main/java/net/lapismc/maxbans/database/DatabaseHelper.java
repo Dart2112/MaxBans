@@ -29,8 +29,7 @@ public class DatabaseHelper {
             try {
                 db.getConnection().prepareStatement("ALTER TABLE mutes ADD COLUMN reason TEXT(100)").execute();
                 System.out.println("Updating mutes table (Adding reason column)");
-            } catch (SQLException ex) {
-                ex.printStackTrace();
+            } catch (SQLException ignored) {
             }
         }
         if (!db.hasTable("iphistory")) {
@@ -54,7 +53,7 @@ public class DatabaseHelper {
         if (!db.hasTable("players")) {
             createPlayersTable(db);
             final ResultSet rs = db.getConnection().prepareStatement("SELECT * FROM iphistory").executeQuery();
-            final List<String> names = new ArrayList<String>();
+            final List<String> names = new ArrayList<>();
             while (rs.next()) {
                 names.add(rs.getString("name"));
             }
@@ -83,8 +82,7 @@ public class DatabaseHelper {
         if (!db.hasColumn("warnings", "expires")) {
             try {
                 db.getConnection().prepareStatement("ALTER TABLE warnings ADD expires long").execute();
-            } catch (SQLException ex2) {
-                ex2.printStackTrace();
+            } catch (SQLException ignored) {
             }
         }
         if (!db.hasColumn("history", "name")) {
@@ -93,8 +91,7 @@ public class DatabaseHelper {
                 db.getConnection().prepareStatement("ALTER TABLE history ADD name TEXT(30)").execute();
                 db.getConnection().prepareStatement("UPDATE history SET banner = 'unknown', name = 'unknown'").execute();
                 System.out.println("History has no banner/name, adding them...");
-            } catch (SQLException ex3) {
-                ex3.printStackTrace();
+            } catch (SQLException ignored) {
             }
         }
     }
@@ -105,7 +102,6 @@ public class DatabaseHelper {
             final Statement st = db.getConnection().createStatement();
             st.execute(query);
         } catch (SQLException e) {
-            e.printStackTrace();
             System.out.println(ChatColor.RED + "Could not create whitelist table.");
         }
     }
@@ -116,7 +112,6 @@ public class DatabaseHelper {
             final Statement st = db.getConnection().createStatement();
             st.execute(query);
         } catch (SQLException e) {
-            e.printStackTrace();
             System.out.println(ChatColor.RED + "Could not create rangebans table.");
         }
     }
@@ -127,7 +122,6 @@ public class DatabaseHelper {
             final Statement st = db.getConnection().createStatement();
             st.execute(query);
         } catch (SQLException e) {
-            e.printStackTrace();
             System.out.println(ChatColor.RED + "Could not create history table.");
         }
     }
@@ -138,7 +132,6 @@ public class DatabaseHelper {
             final Statement st = db.getConnection().createStatement();
             st.execute(query);
         } catch (SQLException e) {
-            e.printStackTrace();
             System.out.println(ChatColor.RED + "Could not create players table.");
         }
     }
@@ -149,7 +142,6 @@ public class DatabaseHelper {
             final Statement st = db.getConnection().createStatement();
             st.execute(query);
         } catch (SQLException e) {
-            e.printStackTrace();
             System.out.println(ChatColor.RED + "Could not create bans table.");
         }
     }
@@ -160,7 +152,6 @@ public class DatabaseHelper {
             final Statement st = db.getConnection().createStatement();
             st.execute(query);
         } catch (SQLException e) {
-            e.printStackTrace();
             System.out.println(ChatColor.RED + "Could not create proxys table.");
         }
     }
@@ -171,7 +162,6 @@ public class DatabaseHelper {
             final Statement st = db.getConnection().createStatement();
             st.execute(query);
         } catch (SQLException e) {
-            e.printStackTrace();
             System.out.println(ChatColor.RED + "Could not create ipbans table.");
         }
     }
@@ -182,7 +172,6 @@ public class DatabaseHelper {
             final Statement st = db.getConnection().createStatement();
             st.execute(query);
         } catch (SQLException e) {
-            e.printStackTrace();
             System.out.println(ChatColor.RED + "Could not create mutes table.");
         }
     }
@@ -193,7 +182,6 @@ public class DatabaseHelper {
             final Statement st = db.getConnection().createStatement();
             st.execute(query);
         } catch (SQLException e) {
-            e.printStackTrace();
             System.out.println(ChatColor.RED + "Could not create iphistory table.");
         }
     }
@@ -204,7 +192,6 @@ public class DatabaseHelper {
             final Statement st = db.getConnection().createStatement();
             st.execute(query);
         } catch (SQLException e) {
-            e.printStackTrace();
             System.out.println(ChatColor.RED + "Could not create warnings table.");
         }
     }

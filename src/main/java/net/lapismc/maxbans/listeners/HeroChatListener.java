@@ -1,7 +1,7 @@
 package net.lapismc.maxbans.listeners;
 
-import net.lapismc.herochat.ChannelChatEvent;
-import net.lapismc.herochat.Chatter;
+import com.dthielke.herochat.ChannelChatEvent;
+import com.dthielke.herochat.Chatter;
 import net.lapismc.maxbans.MaxBans;
 import net.lapismc.maxbans.banmanager.Mute;
 import net.lapismc.maxbans.banmanager.TempMute;
