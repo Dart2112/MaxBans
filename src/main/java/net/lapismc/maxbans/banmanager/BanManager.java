@@ -22,7 +22,6 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class BanManager {
-    public String defaultReason;
     protected final MaxBans plugin;
     private final HashMap<String, Ban> bans;
     private final HashMap<String, TempBan> tempbans;
@@ -39,13 +38,14 @@ public class BanManager {
     private final TrieSet players;
     private final HashMap<String, String> actualNames;
     private final HashSet<String> chatCommands;
+    private final HashSet<String> immunities;
+    private final TreeSet<RangeBan> rangebans;
+    public String defaultReason;
     private boolean lockdown;
     private String lockdownReason;
     private String appealMessage;
     private Database db;
     private DNSBL dnsbl;
-    private final HashSet<String> immunities;
-    private final TreeSet<RangeBan> rangebans;
 
     public BanManager(final MaxBans plugin) {
         super();

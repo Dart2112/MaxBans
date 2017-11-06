@@ -68,7 +68,7 @@ public class DupeIPCommand extends CmdSkeleton {
                 ip = name;
             }
             try {
-                @SuppressWarnings("deprecation")                final OfflinePlayer pl = Bukkit.getOfflinePlayer(name);
+                @SuppressWarnings("deprecation") final OfflinePlayer pl = Bukkit.getOfflinePlayer(name);
                 if (sender instanceof Player) {
                     final Player p = (Player) sender;
                     final String[] str = getScanningString(name, ip).split("\\|");

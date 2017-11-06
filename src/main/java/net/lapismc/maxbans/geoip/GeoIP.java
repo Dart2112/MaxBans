@@ -15,13 +15,7 @@ public class GeoIP implements Comparable<GeoIP> {
     }
 
     public int compareTo(final GeoIP o) {
-        if (o.value > this.value) {
-            return -1;
-        }
-        if (o.value < this.value) {
-            return 1;
-        }
-        return 0;
+        return Long.compare(this.value, o.value);
     }
 
 }
