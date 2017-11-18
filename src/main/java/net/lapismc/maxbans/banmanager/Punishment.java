@@ -3,10 +3,10 @@ package net.lapismc.maxbans.banmanager;
 import net.lapismc.maxbans.util.Util;
 
 public class Punishment {
-    private String id;
     protected String reason;
     protected String banner;
     protected long created;
+    private String id;
 
     Punishment(final String id, final String reason, final String banner, final long created) {
         super();

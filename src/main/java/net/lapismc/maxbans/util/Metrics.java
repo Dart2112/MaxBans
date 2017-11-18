@@ -23,9 +23,7 @@ public class Metrics {
     private static final int PING_INTERVAL = 10;*/
     private final Plugin plugin;
     private final Set<Graph> graphs;
-    private final Graph defaultGraph;
     private final YamlConfiguration configuration;
-    private final File configurationFile;
     private final String guid;
     private final boolean debug;
     private final Object optOutLock;
@@ -34,20 +32,19 @@ public class Metrics {
     public Metrics(final Plugin plugin) throws IOException {
         super();
         this.graphs = Collections.synchronizedSet(new HashSet<Graph>());
-        this.defaultGraph = new Graph("Default");
         this.optOutLock = new Object();
         this.task = null;
         if (plugin == null) {
             throw new IllegalArgumentException("Plugin cannot be null");
         }
         this.plugin = plugin;
-        this.configurationFile = this.getConfigFile();
-        (this.configuration = YamlConfiguration.loadConfiguration(this.configurationFile)).addDefault("opt-out", (Object) false);
-        this.configuration.addDefault("guid", (Object) UUID.randomUUID().toString());
-        this.configuration.addDefault("debug", (Object) false);
-        if (this.configuration.get("guid", (Object) null) == null) {
+        File configurationFile = this.getConfigFile();
+        (this.configuration = YamlConfiguration.loadConfiguration(configurationFile)).addDefault("opt-out", false);
+        this.configuration.addDefault("guid", UUID.randomUUID().toString());
+        this.configuration.addDefault("debug", false);
+        if (this.configuration.get("guid", null) == null) {
             this.configuration.options().header("http://mcstats.org").copyDefaults(true);
-            this.configuration.save(this.configurationFile);
+            this.configuration.save(configurationFile);
         }
         this.guid = this.configuration.getString("guid");
         this.debug = this.configuration.getBoolean("debug", false);
@@ -61,8 +58,8 @@ public class Metrics {
         return URLEncoder.encode(text, "UTF-8");
     }
 
-    static /* synthetic */ void access$2(final Metrics metrics, final BukkitTask task) {
-        metrics.task = task;
+    private static /* synthetic */ void access$2(final Metrics metrics) {
+        metrics.task = null;
     }
 
     public Graph createGraph(final String name) {
@@ -72,21 +69,6 @@ public class Metrics {
         final Graph graph = new Graph(name);
         this.graphs.add(graph);
         return graph;
-    }
-
-    public void addGraph(final Graph graph) {
-        if (graph == null) {
-            throw new IllegalArgumentException("Graph cannot be null");
-        }
-        this.graphs.add(graph);
-    }
-
-    public void addCustomData(final Plotter plotter) {
-        if (plotter == null) {
-            throw new IllegalArgumentException("Plotter cannot be null");
-        }
-        this.defaultGraph.addPlotter(plotter);
-        this.graphs.add(this.defaultGraph);
     }
 
     public boolean start() {
@@ -99,7 +81,7 @@ public class Metrics {
                 // monitorexit(this.optOutLock)
                 return true;
             }
-            this.task = this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(this.plugin, (Runnable) new Runnable() {
+            this.task = this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(this.plugin, new Runnable() {
                 private boolean firstPost = true;
 
                 public void run() {
@@ -107,7 +89,7 @@ public class Metrics {
                         synchronized (Metrics.this.optOutLock) {
                             if (Metrics.this.isOptOut() && Metrics.this.task != null) {
                                 Metrics.this.task.cancel();
-                                Metrics.access$2(Metrics.this, null);
+                                Metrics.access$2(Metrics.this);
                                 for (final Graph graph : Metrics.this.graphs) {
                                     graph.onOptOut();
                                 }
@@ -128,19 +110,13 @@ public class Metrics {
         }
     }
 
-    public boolean isOptOut() {
+    private boolean isOptOut() {
         synchronized (this.optOutLock) {
             try {
                 this.configuration.load(this.getConfigFile());
-            } catch (IOException ex) {
+            } catch (IOException | InvalidConfigurationException ex) {
                 if (this.debug) {
                     Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
-                }
-                // monitorexit(this.optOutLock)
-                return true;
-            } catch (InvalidConfigurationException ex2) {
-                if (this.debug) {
-                    Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex2.getMessage());
                 }
                 // monitorexit(this.optOutLock)
                 return true;
@@ -150,34 +126,7 @@ public class Metrics {
         }
     }
 
-    public void enable() throws IOException {
-        synchronized (this.optOutLock) {
-            if (this.isOptOut()) {
-                this.configuration.set("opt-out", (Object) false);
-                this.configuration.save(this.configurationFile);
-            }
-            if (this.task == null) {
-                this.start();
-            }
-        }
-        // monitorexit(this.optOutLock)
-    }
-
-    public void disable() throws IOException {
-        synchronized (this.optOutLock) {
-            if (!this.isOptOut()) {
-                this.configuration.set("opt-out", (Object) true);
-                this.configuration.save(this.configurationFile);
-            }
-            if (this.task != null) {
-                this.task.cancel();
-                this.task = null;
-            }
-        }
-        // monitorexit(this.optOutLock)
-    }
-
-    public File getConfigFile() {
+    private File getConfigFile() {
         final File pluginsFolder = this.plugin.getDataFolder().getParentFile();
         return new File(new File(pluginsFolder, "PluginMetrics"), "config.yml");
     }
@@ -267,7 +216,7 @@ public class Metrics {
 
         private Graph(final String name) {
             super();
-            this.plotters = new LinkedHashSet<Plotter>();
+            this.plotters = new LinkedHashSet<>();
             this.name = name;
         }
 
@@ -279,12 +228,8 @@ public class Metrics {
             this.plotters.add(plotter);
         }
 
-        public void removePlotter(final Plotter plotter) {
-            this.plotters.remove(plotter);
-        }
-
-        public Set<Plotter> getPlotters() {
-            return Collections.unmodifiableSet((Set<? extends Plotter>) this.plotters);
+        Set<Plotter> getPlotters() {
+            return Collections.unmodifiableSet(this.plotters);
         }
 
         public int hashCode() {
@@ -299,29 +244,29 @@ public class Metrics {
             return graph.name.equals(this.name);
         }
 
-        protected void onOptOut() {
+        void onOptOut() {
         }
     }
 
     public abstract static class Plotter {
         private final String name;
 
-        public Plotter() {
+        protected Plotter() {
             this("Default");
         }
 
-        public Plotter(final String name) {
+        Plotter(final String name) {
             super();
             this.name = name;
         }
 
         public abstract int getValue();
 
-        public String getColumnName() {
+        String getColumnName() {
             return this.name;
         }
 
-        public void reset() {
+        void reset() {
         }
 
         public int hashCode() {

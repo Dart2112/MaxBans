@@ -30,8 +30,8 @@ import java.util.logging.Logger;
 
 public class MaxBans extends JavaPlugin {
     public static MaxBans instance;
-    public Logger logger = getLogger();
     public boolean filter_names;
+    private Logger logger = getLogger();
     private BanManager banManager;
     private Syncer syncer;
     private SyncServer syncServer;
@@ -39,7 +39,7 @@ public class MaxBans extends JavaPlugin {
     private Database db;
     private Metrics metrics;
 
-    private static /* synthetic */ void access$0(final MaxBans maxBans, final GeoIPDatabase geoIPDB) {
+    private static void access$0(final MaxBans maxBans, final GeoIPDatabase geoIPDB) {
         maxBans.geoIPDB = geoIPDB;
     }
 

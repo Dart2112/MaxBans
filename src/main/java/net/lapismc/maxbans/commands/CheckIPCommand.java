@@ -54,7 +54,7 @@ public class CheckIPCommand extends CmdSkeleton {
             final ArrayList<UUID> ids = new ArrayList<>();
             for (final String s : dupeip) {
                 try {
-                    @SuppressWarnings("deprecation")                    final OfflinePlayer p = Bukkit.getOfflinePlayer(s);
+                    @SuppressWarnings("deprecation") final OfflinePlayer p = Bukkit.getOfflinePlayer(s);
                     if (ids.contains(p.getUniqueId())) {
                         continue;
                     }

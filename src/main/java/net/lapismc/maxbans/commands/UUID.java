@@ -21,7 +21,7 @@ public class UUID extends CmdSkeleton {
             String name = args[0];
             name = this.plugin.getBanManager().match(name);
             try {
-                @SuppressWarnings("deprecation")                final OfflinePlayer p = Bukkit.getOfflinePlayer(name);
+                @SuppressWarnings("deprecation") final OfflinePlayer p = Bukkit.getOfflinePlayer(name);
                 sender.sendMessage(ChatColor.GREEN + p.getName() + "'s UUID is " + p.getUniqueId().toString());
             } catch (Exception e) {
                 sender.sendMessage(ChatColor.RED + "No player by that name!");
