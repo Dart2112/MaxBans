@@ -26,7 +26,7 @@ public class MySQLCore implements DatabaseCore {
         this.info.put("password", pass);
         this.info.put("useUnicode", "true");
         this.info.put("characterEncoding", "utf8");
-        this.url = ("jdbc:mysql://" + host + ":" + port + "/" + database);
+        this.url = ("jdbc:mysql://" + host + ":" + port + "/" + database + "?verifyServerCertificate=false&useSSL=true");
         for (int i = 0; i < 8; i++) {
             pool.add(null);
         }
